@@ -1,5 +1,6 @@
 # Use Caffe2 image as parent image
-FROM caffe2/caffe2:snapshot-py2-cuda9.0-cudnn7-ubuntu16.04
+#FROM caffe2/caffe2:snapshot-py2-cuda9.0-cudnn7-ubuntu16.04
+FROM caffe2/caffe2:snapshot-py2-cuda8.0-cudnn7-ubuntu16.04
 
 RUN mv /usr/local/caffe2 /usr/local/caffe2_build
 ENV Caffe2_DIR /usr/local/caffe2_build
