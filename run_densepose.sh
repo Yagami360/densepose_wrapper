@@ -5,8 +5,7 @@ DENSEPOSE_DIR=${ROOT_DIR}/DensePose
 CONTAINER_NAME=densepose_container
 
 FILE_EXT=jpg
-#IMAGE_FILE=DensePoseData/demo_data/demo_im.jpg
-IMAGE_FILE=sample_n5
+IMAGE_FILE=DensePoseData/demo_data/demo_im.jpg
 OUTPUT_DIR=results
 mkdir -p ${OUTPUT_DIR}
 

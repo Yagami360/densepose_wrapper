@@ -40,7 +40,7 @@ args = False
 #================================================================
 @app.route('/')
 def index():
-    print( "リクエスト受け取り" )
+    print "リクエスト受け取り"
     return
 
 #================================================================
@@ -48,10 +48,10 @@ def index():
 #================================================================
 @app.route('/densepose', methods=['POST'])
 def responce():
-    print( "リクエスト受け取り" )
+    print "リクエスト受け取り"
     if( app.debug ):
-        print( "flask.request.method : ", flask.request.method )
-        print( "flask.request.headers \n: ", flask.request.headers )
+        print "flask.request.method : ", flask.request.method
+        print "flask.request.headers \n: ", flask.request.headers
 
     #------------------------------------------
     # 送信された json データの取得
@@ -96,7 +96,7 @@ def responce():
     #response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     #response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     if( app.debug ):
-        print( "response.headers : \n", response.headers )
+        print "response.headers : \n", response.headers
 
     return response, http_status_code
 
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if( args.debug ):
         for key, value in vars(args).items():
-            print('%s: %s' % (str(key), str(value)))
+            print '%s: %s' % (str(key), str(value))
 
     if not os.path.exists("tmp"):
         os.mkdir("tmp")
