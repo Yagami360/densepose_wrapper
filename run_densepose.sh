@@ -5,28 +5,17 @@ DENSEPOSE_DIR=${ROOT_DIR}/DensePose
 CONTAINER_NAME=densepose_container
 
 FILE_EXT=jpg
-IMAGE_FILE=DensePoseData/demo_data/demo_im.jpg
-OUTPUT_DIR=DensePoseData/infer_out
-#OUTPUT_DIR=results
-
-# データセットの準備
-cd ${DENSEPOSE_DIR}/DensePoseData
-if [ ! -e ${DENSEPOSE_DIR}/DensePoseData/DensePose_COCO ] ; then
-    bash get_DensePose_COCO.sh
-fi
-if [ ! -e ${DENSEPOSE_DIR}/DensePoseData/UV_data ] ; then
-    bash get_densepose_uv.sh
-fi
-if [ ! -e ${DENSEPOSE_DIR}/DensePoseData/eval_data ] ; then
-    bash get_eval_data.sh
-fi
+#IMAGE_FILE=DensePoseData/demo_data/demo_im.jpg
+IMAGE_FILE=sample_n5
+OUTPUT_DIR=results
+mkdir -p ${OUTPUT_DIR}
 
 # コンテナ起動
 cd ${ROOT_DIR}
 docker-compose stop
 docker-compose up -d
 
-#<<COMMENTOUT
+# densepose の実行
 docker exec -it ${CONTAINER_NAME} /bin/bash -c \
     "python2 tools/infer_simple.py \
         --cfg configs/DensePose_ResNet101_FPN_s1x-e2e.yaml \
@@ -34,6 +23,5 @@ docker exec -it ${CONTAINER_NAME} /bin/bash -c \
         --image-ext ${FILE_EXT} \
         --wts https://dl.fbaipublicfiles.com/densepose/DensePose_ResNet101_FPN_s1x-e2e.pkl \
         ${IMAGE_FILE}"
-#COMMENTOUT
 
 #docker exec -it ${CONTAINER_NAME} /bin/bash

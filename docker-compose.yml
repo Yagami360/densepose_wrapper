@@ -6,8 +6,8 @@ services:
         image: densepose_image
         runtime: nvidia
         volumes:
-            - ${PWD}/DensePose:/densepose
             - ${PWD}/DensePose/DensePoseData:/denseposedata
+            - ${PWD}/results:/densepose/results
         build:
             context: .
             dockerfile: docker/Dockerfile
