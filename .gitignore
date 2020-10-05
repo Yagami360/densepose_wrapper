@@ -39,3 +39,5 @@ configs_old/*
 
 
 *.pdf
+DensePose/DensePoseData/infer_data
+results/
