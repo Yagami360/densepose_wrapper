@@ -39,5 +39,6 @@ configs_old/*
 
 
 *.pdf
+*.out
 DensePose/DensePoseData/infer_data
 results/
