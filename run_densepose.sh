@@ -4,11 +4,14 @@ ROOT_DIR=${PWD}
 DENSEPOSE_DIR=${ROOT_DIR}/DensePose
 CONTAINER_NAME=densepose_container
 
-FILE_EXT=jpg
+#FILE_EXT=jpg
 #IMAGE_FILE=DensePoseData/demo_data/demo_im.jpg
+#OUTPUT_DIR=results/demo_data
+FILE_EXT=jpg
 IMAGE_FILE=DensePoseData/infer_data/sample_n5
-OUTPUT_DIR=results
-mkdir -p ${OUTPUT_DIR}
+OUTPUT_DIR=results/sample_n5
+
+sudo mkdir -p ${OUTPUT_DIR}
 sudo rm -rf ${OUTPUT_DIR}
 
 # コンテナ起動
