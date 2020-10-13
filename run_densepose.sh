@@ -11,8 +11,11 @@ FILE_EXT=jpg
 IMAGE_FILE=DensePoseData/infer_data/sample_n5
 OUTPUT_DIR=results/sample_n5
 
-sudo mkdir -p ${OUTPUT_DIR}
+sudo mkdir -p ${OUTPUT_DIR}z
 sudo rm -rf ${OUTPUT_DIR}
+
+# データセットの準備
+sh fetch_densepose_data.sh
 
 # コンテナ起動
 cd ${ROOT_DIR}
