@@ -2,7 +2,7 @@
 [DensePose](https://github.com/facebookresearch/DensePose) の推論スクリプト `tools/infer_simple.py` のラッパーモジュール。<br>
 以下の機能を追加しています。
 
-- docker 環境に対応。（公式の dockerfile では動作しなかったため）
+- docker 環境に対応。（公式の dockerfile やインストール方法では動作しなかったため）
 - keypoints も取得可能にする予定
 - サーバー機能を追加予定。
 
@@ -52,3 +52,7 @@ $ sh run_densepose.sh
     - `${FILE_EXT}` : 画像ファイルの拡張子 ("jpg" or "png")
     - `${IMAGE_FILE}` : 入力画像のディレクトリ（例 : `DensePoseData/infer_data/sample_n5`）
         - `DensePoseData/infer_data` 以下のディレクトリである必要があります
+
+1. UV 等高線の表示
+    ```sh
+    ```

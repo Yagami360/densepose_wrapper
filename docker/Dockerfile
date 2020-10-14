@@ -14,9 +14,9 @@ RUN git clone https://github.com/facebookresearch/densepose /densepose
 # Install Python dependencies
 RUN pip install --upgrade pip
 RUN pip install scikit-build
-RUN pip install PyYAML==3.12
 RUN pip install opencv-python==4.2.0.32
 RUN pip install -r /densepose/requirements.txt
+RUN pip install PyYAML==3.12
 
 # Install the COCO API
 RUN git clone https://github.com/cocodataset/cocoapi.git /cocoapi
