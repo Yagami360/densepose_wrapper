@@ -3,98 +3,52 @@
 以下の機能を追加しています。
 
 - docker 環境に対応。（公式の dockerfile では動作しなかったため）
-- サーバー機能を追加。
+- keypoints も取得可能にする予定
+- サーバー機能を追加予定。
 
 ## ■ 動作環境
 
-- nvidia 製 GPU 搭載マシン
+- docker
 - nvidia-docker2
-- サーバー起動使用時は、以下のモジュールが追加で必要になります
-    - flask : 
-    - flask_cors :
-    - requests : 
+- docker-compose
+- nvidia 製 GPU 搭載マシン
+    - K80 インスタンスでの動作を確認済み
+    - T4 インスタンスでは動作しないことを確認済み
 
 ## ■ 使い方
 
-### ◎ サーバー機能非使用時
+### ◎ `run_densepose.sh` を利用する場合
 
-- 推論スクリプトの実行（GPU で実行時）<br>
+`run_densepose.sh` のパラメーターを変更後、以下のコマンドを実行
+
+```sh
+$ sh run_densepose.sh
+```
+
+### ◎ `run_densepose.sh` を利用しない場合
+
+1. データセットの準備
     ```sh
-    # 視覚用の人物パース画像の RGB画像も生成する場合（AMP 使用）
-    # --in_image_dir : 入力人物画像のディレクトリ
-    # --results_dir : 人物パース画像のディレクトリ
-    $ python run_inference_all.py \
-        --device gpu \
-        --in_image_dir sample_n5 \
-        --results_dir results \
-        --load_checkpoints_path checkpoints/universal_trained.pth \
-        --save_vis \
-        --use_amp
-    ```
-    ```sh
-    # グレースケール画像のみ生成する場合（AMP 使用）
-    $ python run_inference_all.py \
-        --use_gpu gpu \
-        --in_image_dir sample_n5 \
-        --results_dir results \
-        --load_checkpoints_path checkpoints/universal_trained.pth \
-        --use_amp
+    $ sh sh fetch_densepose_data.sh
     ```
 
-- 推論スクリプトの実行（CPU で実行時）<br>
-    ```sh
-    # 視覚用の人物パース画像の RGB画像も生成する場合
-    # --in_image_dir : 入力人物画像のディレクトリ
-    # --results_dir : 人物パース画像のディレクトリ
-    $ python run_inference_all.py \
-        --device cpu \
-        --in_image_dir sample_n5 \
-        --results_dir results \
-        --load_checkpoints_path checkpoints/universal_trained.pth \
-        --save_vis
-    ```
-    ```sh
-    # グレースケール画像のみ生成する場合
-    $ python run_inference_all.py \
-        --use_gpu cpu \
-        --in_image_dir sample_n5 \
-        --results_dir results \
-        --load_checkpoints_path checkpoints/universal_trained.pth
-    ```
-
-### ◎ サーバー機能使用時
-サーバー機能使用時は、デフォルト設定では、`5003` 番ポートが開放されている必要があります。 使用するポート番号は、`app.py`, `request.py` の --port 引数の値を設定することで変更できます。
-
-- サーバーの起動
-    ```sh
-    $ python app.py \
-        --host 0.0.0.0 --port 5003
-    ```
-
-- リクエストの送信
-    ```sh
-    $ python request.py \
-        --host 0.0.0.0 --port 5003 \
-        --in_image_dir sample_n5 \
-        --results_dir results
-    ```
-
-### ◎ サーバー機能使用時 （Docker 使用時）
-コンテナ内でサーバーを起動して densepose を実行します。<br>
-サーバー機能使用時は、デフォルト設定では、`5003` 番ポートが開放されている必要があります。 <br>
-使用するポート番号は、docker-compose.yml 内の ports: タグ、及び、`app.py`, `request.py` の --port 引数の値を設定することで変更できます。<br>
-
-- docker イメージの作成 & コンテナの起動 & サーバーの起動
+1. docker イメージの作成＆コンテナ起動
     ```sh
     $ docker-compose stop
     $ docker-compose up -d
     ```
 
-- リクエストの送信
+1. densepose の推論スクリプトの実行
     ```sh
-    $ python request.py \
-        --host 0.0.0.0 --port 5003 \
-        --in_image_dir sample_n5 \
-        --results_dir results
+    $ docker exec -it densepose_container /bin/bash -c \
+        "python2 tools/infer_simple.py \
+            --cfg configs/DensePose_ResNet101_FPN_s1x-e2e.yaml \
+            --output-dir ${OUTPUT_DIR} \
+            --image-ext ${FILE_EXT} \
+            --wts https://dl.fbaipublicfiles.com/densepose/DensePose_ResNet101_FPN_s1x-e2e.pkl \
+            ${IMAGE_FILE}"
     ```
-
+    - `${OUTPUT_DIR}` : 出力ディレクトリ（例 : `results/sample_n5`）
+    - `${FILE_EXT}` : 画像ファイルの拡張子 ("jpg" or "png")
+    - `${IMAGE_FILE}` : 入力画像のディレクトリ（例 : `DensePoseData/infer_data/sample_n5`）
+        - `DensePoseData/infer_data` 以下のディレクトリである必要があります

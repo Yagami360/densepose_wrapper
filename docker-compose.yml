@@ -8,6 +8,7 @@ services:
         volumes:
             - ${PWD}/DensePose/DensePoseData:/denseposedata
             - ${PWD}/DensePose/DensePoseData:/densepose/DensePoseData
+            - ${PWD}/DensePose/configs:/densepose/configs
             - ${PWD}/results:/densepose/results
         build:
             context: .
