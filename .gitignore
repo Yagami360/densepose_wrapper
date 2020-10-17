@@ -40,4 +40,5 @@ configs_old/*
 
 *.pdf
 *.out
+_old
 results/

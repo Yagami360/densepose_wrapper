@@ -20,10 +20,10 @@ docker-compose stop
 docker-compose up -d
 
 # densepose の実行
-docker exec -it ${CONTAINER_NAME} /bin/bash -c \
-    "python2 tools/infer_simple.py \
-        --cfg configs/DensePose_ResNet101_FPN_s1x-e2e.yaml \
-        --output-dir ${OUTPUT_DIR} \
-        --image-ext ${FILE_EXT} \
-        --wts https://dl.fbaipublicfiles.com/densepose/DensePose_ResNet101_FPN_s1x-e2e.pkl \
-        DensePoseData/${IMAGE_FILE}"
+cd api
+
+python request.py \
+    --port 5003 \
+    --in_image_dir "../${IMAGE_FILE}" \
+    --results_dir "../${OUTPUT_DIR}" \
+    --debug

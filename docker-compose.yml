@@ -8,8 +8,10 @@ services:
         volumes:
             - ${PWD}/DensePose/DensePoseData:/denseposedata
             - ${PWD}/DensePose/DensePoseData:/densepose/DensePoseData
+            - ${PWD}/infer_data:/densepose/DensePoseData/infer_data
             - ${PWD}/DensePose/configs:/densepose/configs
             - ${PWD}/results:/densepose/results
+            - ${PWD}/api:/densepose/api
         build:
             context: .
             dockerfile: docker/Dockerfile
@@ -20,3 +22,4 @@ services:
             TZ: "Asia/Tokyo"
             LC_ALL: C.UTF-8
             LANG: C.UTF-8
+        command: bash -c "cd api && python2 app.py --port 5003 --debug"

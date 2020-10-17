@@ -3,12 +3,6 @@ import os
 import io
 from PIL import Image
 import base64
-import cv2
-import numpy as np
-
-import torch
-import torch.nn as nn
-from torchvision.utils import save_image
 
 #====================================================
 # 画像変換関連

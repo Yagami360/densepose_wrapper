@@ -131,7 +131,7 @@ def main(args):
             thresh=0.7,
             kp_thresh=2
         )
-
+    
 
 if __name__ == '__main__':
     workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])

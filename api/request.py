@@ -18,10 +18,12 @@ IMG_EXTENSIONS = (
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', type=str, default="localhost", help="DensePose サーバーのホスト名（コンテナ名 or コンテナ ID）")
+    parser.add_argument('--host', type=str, default="0.0.0.0", help="ホスト名（コンテナ名 or コンテナ ID）")
+    #parser.add_argument('--host', type=str, default="localhost", help="ホスト名（コンテナ名 or コンテナ ID）")
+    #parser.add_argument('--host', type=str, default="densepose_container", help="ホスト名（コンテナ名 or コンテナ ID）")
     parser.add_argument('--port', type=str, default="5003", help="DensePose サーバーのポート番号")
-    parser.add_argument('--in_image_dir', type=str, default="../sample_n5", help="入力人物画像のディレクトリ")
-    parser.add_argument('--results_dir', type=str, default="../results", help="出力人物パース画像を保存するディレクトリ")
+    parser.add_argument('--in_image_dir', type=str, default="../infer_data/sample_n5", help="入力人物画像のディレクトリ")
+    parser.add_argument('--results_dir', type=str, default="../results/sample_n5", help="出力人物パース画像を保存するディレクトリ")
     parser.add_argument('--debug', action='store_true', help="デバッグモード有効化")
     args = parser.parse_args()
     if( args.debug ):
@@ -51,11 +53,6 @@ if __name__ == "__main__":
         try:
             densepose_responce = requests.post( densepose_server_url, json=densepose_msg )
             densepose_responce = densepose_responce.json()
-            """
-            if( args.debug ):
-                print( "densepose_responce : ", densepose_responce )
-            """
-
         except Exception as e:
             print( "通信失敗 [DensePose]" )
             print( "Exception : ", e )
@@ -64,6 +61,12 @@ if __name__ == "__main__":
         #----------------------------------
         # ファイルに保存
         #----------------------------------
-        pose_parse_img_base64 = densepose_responce["pose_parse_img_base64"]
-        pose_parse_img_pillow = conv_base64_to_pillow(pose_parse_img_base64)
-        pose_parse_img_pillow.save( os.path.join( args.results_dir, img_name.split(".")[0] + ".png" ) )
+        # IUV
+        iuv_img_base64 = densepose_responce["iuv_img_base64"]
+        iuv_img_pillow = conv_base64_to_pillow(iuv_img_base64)
+        iuv_img_pillow.save( os.path.join( args.results_dir, img_name.split(".")[0] + "_IUV.png" ) )
+
+        # IND
+        inds_img_base64 = densepose_responce["inds_img_base64"]
+        inds_img_pillow = conv_base64_to_pillow(inds_img_base64)
+        inds_img_pillow.save( os.path.join( args.results_dir, img_name.split(".")[0] + "_INDS.png" ) )

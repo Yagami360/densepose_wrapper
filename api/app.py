@@ -13,8 +13,7 @@ import flask
 from flask_cors import CORS
 
 # DensePose
-sys.path.append(os.path.join(os.getcwd(), 'DensePose/tools'))
-from inference import inference
+from infer_simple import inference
 
 # 自作モジュール
 from utils import conv_base64_to_pillow, conv_pillow_to_base64
@@ -48,7 +47,7 @@ def index():
 #================================================================
 @app.route('/densepose', methods=['POST'])
 def responce():
-    print "リクエスト受け取り"
+    print( "リクエスト受け取り" )
     if( app.debug ):
         print "flask.request.method : ", flask.request.method
         print "flask.request.headers \n: ", flask.request.headers
@@ -71,14 +70,16 @@ def responce():
     # DensePose の実行
     #------------------------------------------
     in_img_path = os.path.join( "tmp", "pose_img.png" )
-    pose_parse_img_np = inference( args )
-    pose_parse_img_pillow = Image.fromarray( np.uint8(pose_parse_img_np.transpose(0,1)) , 'L')
-    pose_parse_img_pillow.save( os.path.join( "tmp", "pose_parse_img.png" ) )
+    print( "call inference" )
+    iuv_pillow, inds_pillow = inference( cfg = args.cfg, weights = args.weights, img_pillow = pose_img_pillow, output_dir = args.output_dir )
+    iuv_pillow.save( os.path.join( "tmp", "iuv.png" ) )
+    inds_pillow.save( os.path.join( "tmp", "inds.png" ) )
 
     #------------------------------------------
     # 送信する画像データの変換
     #------------------------------------------
-    pose_parse_img_base64 = conv_pillow_to_base64( pose_parse_img_pillow )
+    iuv_img_base64 = conv_pillow_to_base64( iuv_pillow )
+    inds_img_base64 = conv_pillow_to_base64( inds_pillow )
 
     #------------------------------------------
     # レスポンスメッセージの設定
@@ -87,7 +88,8 @@ def responce():
     response = flask.jsonify(
         {
             'status':'OK',
-            'pose_parse_img_base64': pose_parse_img_base64,
+            'iuv_img_base64': iuv_img_base64,
+            'inds_img_base64': inds_img_base64,
         }
     )
 
@@ -103,16 +105,15 @@ def responce():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    #parser.add_argument('--host', type=str, default="localhost", help="ホスト名（コンテナ名 or コンテナ ID）")
     parser.add_argument('--host', type=str, default="0.0.0.0", help="ホスト名（コンテナ名 or コンテナ ID）")
+    #parser.add_argument('--host', type=str, default="localhost", help="ホスト名（コンテナ名 or コンテナ ID）")
+    #parser.add_argument('--host', type=str, default="densepose_container", help="ホスト名（コンテナ名 or コンテナ ID）")
     parser.add_argument('--port', type=str, default="5003", help="ポート番号")
     parser.add_argument('--enable_threaded', action='store_true', help="並列処理有効化")
     parser.add_argument('--debug', action='store_true', help="デバッグモード有効化")
-    parser.add_argument('--cfg', dest='cfg', help='cfg model file (/path/to/model_config.yaml)', default="DensePose/configs/DensePose_ResNet101_FPN_s1x-e2e.yaml", type=str)
-    parser.add_argument('--wts', dest='weights', help='weights model file (/path/to/model_weights.pkl)', default="https://dl.fbaipublicfiles.com/densepose/DensePose_ResNet101_FPN_s1x-e2e.pkl", type=str)
-    parser.add_argument('--output-dir', dest='output_dir', help='directory for visualization pdfs (default: /tmp/infer_simple)', default='results', type=str)
-    parser.add_argument('--image-ext', dest='image_ext', help='image file name extension (default: jpg)', default='jpg', type=str)
-    parser.add_argument('im_or_folder', help='image or folder of images', default="sample_n5")
+    parser.add_argument('--cfg', type=str, default="../DensePose/configs/DensePose_ResNet101_FPN_s1x-e2e.yaml", help='cfg model file (/path/to/model_config.yaml)')
+    parser.add_argument('--weights', type=str, default="https://dl.fbaipublicfiles.com/densepose/DensePose_ResNet101_FPN_s1x-e2e.pkl", help='weights model file (/path/to/model_weights.pkl)')
+    parser.add_argument('--output_dir', type=str, default='results', help='directory for visualization pdfs (default: /tmp/infer_simple)')
     args = parser.parse_args()
     if( args.debug ):
         for key, value in vars(args).items():

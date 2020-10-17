@@ -25,6 +25,13 @@ RUN pip install cython
 RUN pip install matplotlib==2.1.0
 RUN make install
 
+# for api
+RUN pip install tqdm
+RUN pip install pillow==6.2.1
+RUN pip install flask
+RUN pip install flask-cors
+RUN pip install requests
+
 # Go to Densepose root
 WORKDIR /densepose
 
