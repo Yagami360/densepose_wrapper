@@ -23,7 +23,7 @@ if __name__ == "__main__":
     #parser.add_argument('--host', type=str, default="densepose_container", help="ホスト名（コンテナ名 or コンテナ ID）")
     parser.add_argument('--port', type=str, default="5003", help="DensePose サーバーのポート番号")
     parser.add_argument('--in_image_dir', type=str, default="../infer_data/sample_n5", help="入力人物画像のディレクトリ")
-    parser.add_argument('--results_dir', type=str, default="../results/sample_n5", help="出力人物パース画像を保存するディレクトリ")
+    parser.add_argument('--results_dir', type=str, default="../results_api/sample_n5", help="出力人物パース画像を保存するディレクトリ")
     parser.add_argument('--debug', action='store_true', help="デバッグモード有効化")
     args = parser.parse_args()
     if( args.debug ):
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     if not os.path.isdir(args.results_dir):
         os.mkdir(args.results_dir)
-    
+
     densepose_server_url = "http://" + args.host + ":" + args.port + "/densepose"
     if( args.debug ):
         print( "densepose_server_url : ", densepose_server_url )

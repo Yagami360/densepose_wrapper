@@ -70,10 +70,7 @@ def responce():
     # DensePose の実行
     #------------------------------------------
     in_img_path = os.path.join( "tmp", "pose_img.png" )
-    print( "call inference" )
-    iuv_pillow, inds_pillow = inference( cfg = args.cfg, weights = args.weights, img_pillow = pose_img_pillow, output_dir = args.output_dir )
-    iuv_pillow.save( os.path.join( "tmp", "iuv.png" ) )
-    inds_pillow.save( os.path.join( "tmp", "inds.png" ) )
+    iuv_pillow, inds_pillow = inference( cfg_path = args.cfg, weights = args.weights, img_pillow = pose_img_pillow, output_dir = "tmp" )
 
     #------------------------------------------
     # 送信する画像データの変換
@@ -111,9 +108,8 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=str, default="5003", help="ポート番号")
     parser.add_argument('--enable_threaded', action='store_true', help="並列処理有効化")
     parser.add_argument('--debug', action='store_true', help="デバッグモード有効化")
-    parser.add_argument('--cfg', type=str, default="../DensePose/configs/DensePose_ResNet101_FPN_s1x-e2e.yaml", help='cfg model file (/path/to/model_config.yaml)')
+    parser.add_argument('--cfg', type=str, default="../configs/DensePose_ResNet101_FPN_s1x-e2e.yaml", help='cfg model file (/path/to/model_config.yaml)')
     parser.add_argument('--weights', type=str, default="https://dl.fbaipublicfiles.com/densepose/DensePose_ResNet101_FPN_s1x-e2e.pkl", help='weights model file (/path/to/model_weights.pkl)')
-    parser.add_argument('--output_dir', type=str, default='results', help='directory for visualization pdfs (default: /tmp/infer_simple)')
     args = parser.parse_args()
     if( args.debug ):
         for key, value in vars(args).items():

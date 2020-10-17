@@ -8,8 +8,9 @@ services:
         volumes:
             - ${PWD}/DensePose/DensePoseData:/denseposedata
             - ${PWD}/DensePose/DensePoseData:/densepose/DensePoseData
-            - ${PWD}/infer_data:/densepose/DensePoseData/infer_data
             - ${PWD}/DensePose/configs:/densepose/configs
+            - ${PWD}/DensePose/tools:/densepose/tools
+            - ${PWD}/infer_data:/densepose/DensePoseData/infer_data
             - ${PWD}/results:/densepose/results
             - ${PWD}/api:/densepose/api
         build:

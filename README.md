@@ -3,8 +3,10 @@
 以下の機能を追加しています。
 
 - docker 環境に対応。（公式の dockerfile やインストール方法では動作しなかったため）
-- keypoints も取得可能にする予定
-- サーバー機能を追加予定。
+- サーバー機能を追加。
+- 追加予定
+    - UV 値の等高線表示画像の出力
+    - keypoints も取得可能
 
 ## ■ 動作環境
 
@@ -17,7 +19,9 @@
 
 ## ■ 使い方
 
-### ◎ `run_densepose.sh` を利用する場合
+### ◎ サーバー API 機能非使用時
+
+#### ☆ `run_densepose.sh` を利用する場合
 
 `run_densepose.sh` のパラメーターを変更後、以下のコマンドを実行
 
@@ -25,11 +29,11 @@
 $ sh run_densepose.sh
 ```
 
-### ◎ `run_densepose.sh` を利用しない場合
+#### ☆ `run_densepose.sh` を利用しない場合
 
 1. データセットの準備
     ```sh
-    $ sh sh fetch_densepose_data.sh
+    $ sh fetch_densepose_data.sh
     ```
 
 1. docker イメージの作成＆コンテナ起動
@@ -54,5 +58,41 @@ $ sh run_densepose.sh
         - `DensePoseData/infer_data` 以下のディレクトリである必要があります
 
 1. UV 等高線の表示
+    実装中...
     ```sh
     ```
+
+### ◎ サーバー API 機能使用時
+
+#### ☆ `run_densepose_request.sh` を利用する場合
+
+`run_densepose_request.sh` のパラメーターを変更後、以下のコマンドを実行
+```sh
+$ sh  run_densepose_request.sh
+```
+
+#### ☆ `run_densepose_request.sh` を利用しない場合
+
+1. データセットの準備
+    ```sh
+    $ sh fetch_densepose_data.sh
+    ```
+
+1. docker イメージの作成＆コンテナ起動
+    ```sh
+    $ docker-compose stop
+    $ docker-compose up -d
+    $ sleep 5
+    ```
+
+1. リクエスト送信
+    ```sh
+    $ cd api
+    $ python request.py \
+        --port 5003 \
+        --in_image_dir "${INPUT_DIR}" \
+        --results_dir "${OUTPUT_DIR}" \
+        --debug
+    ```
+    - `${INPUT_DIR}` : 入力ディレクトリ（例 : `../infer_data/sample_n5`）
+    - `${OUTPUT_DIR}` : 出力ディレクトリ（例 : `../results_api/sample_n5`）

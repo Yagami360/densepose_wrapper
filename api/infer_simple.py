@@ -23,6 +23,7 @@ import os
 import sys
 import time
 from PIL import Image
+import numpy as np
 
 from caffe2.python import workspace
 
@@ -45,15 +46,18 @@ c2_utils.import_detectron_ops()
 cv2.ocl.setUseOpenCL(False)
 
 
-def inference( cfg, weights, img_pillow, output_dir ):
-    workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])
-    setup_logging(__name__)
+workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])
+setup_logging(__name__)
 
+def inference( cfg_path, weights, img_pillow, output_dir ):
     logger = logging.getLogger(__name__)
-    merge_cfg_from_file(cfg)
+
+    merge_cfg_from_file(cfg_path)
+    #print( "cfg : ", cfg )
+    assert_and_infer_cfg(cache_urls=False, make_immutable=False)
+
     cfg.NUM_GPUS = 1
     weights = cache_url(weights, cfg.DOWNLOAD_CACHE)
-    assert_and_infer_cfg(cache_urls=False)
     model = infer_engine.initialize_model_from_cfg(weights)
     dummy_coco_dataset = dummy_datasets.get_coco_dataset()
 
@@ -90,8 +94,6 @@ def inference( cfg, weights, img_pillow, output_dir ):
 
     IUV_SaveName = os.path.basename(im_name).split('.')[0]+'_IUV.png'
     INDS_SaveName = os.path.basename(im_name).split('.')[0]+'_INDS.png'
-    print( "IUV path : {}".format(os.path.join(output_dir, '{}'.format(IUV_SaveName))) )
-
     iuv_pillow = Image.open(os.path.join(output_dir, '{}'.format(IUV_SaveName)))
     inds_pillow = Image.open(os.path.join(output_dir, '{}'.format(INDS_SaveName)))
     return iuv_pillow, inds_pillow
