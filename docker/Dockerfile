@@ -23,6 +23,7 @@ RUN git clone https://github.com/cocodataset/cocoapi.git /cocoapi
 WORKDIR /cocoapi/PythonAPI
 RUN pip install cython
 RUN pip install matplotlib==2.1.0
+#RUN pip install python-tk
 RUN make install
 
 # for api

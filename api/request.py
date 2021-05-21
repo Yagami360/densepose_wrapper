@@ -70,3 +70,17 @@ if __name__ == "__main__":
         inds_img_base64 = densepose_responce["inds_img_base64"]
         inds_img_pillow = conv_base64_to_pillow(inds_img_base64)
         inds_img_pillow.save( os.path.join( args.results_dir, img_name.split(".")[0] + "_INDS.png" ) )
+
+        # パース画像
+        """
+        parse_img_base64 = densepose_responce["parse_img_base64"]
+        parse_img_pillow = conv_base64_to_pillow(parse_img_base64)
+        parse_img_pillow.save( os.path.join( args.results_dir, img_name.split(".")[0] + "_parse.png" ) )
+        """
+        
+        # 等高線画像
+        """
+        contour_img_base64 = densepose_responce["contour_img_base64"]
+        contour_img_pillow = conv_base64_to_pillow(contour_img_base64)
+        contour_img_pillow.save( os.path.join( args.results_dir, img_name.split(".")[0] + "_contour.png" ) )
+        """

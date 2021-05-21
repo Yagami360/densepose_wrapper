@@ -1,4 +1,5 @@
 import os
+import io
 import argparse
 import numpy
 import cv2
@@ -26,15 +27,28 @@ if __name__ == '__main__':
     for img_name in tqdm(image_names):
         img_IUV = cv2.imread( os.path.join(args.in_image_dir, img_name) )
         if( args.format == "contour" ):
-            fig = plt.figure(figsize=[args.image_width/100,args.image_height/100])
-            plt.contour( img_IUV[:,:,1]/256., 10, linewidths = 1 )
-            plt.contour( img_IUV[:,:,2]/256., 10, linewidths = 1 )
+            aspect = args.image_width / args.image_height
+            fig, ax = plt.subplots(figsize=[3,4])
+            #fig, ax = plt.subplots(figsize=(args.image_width/10, args.image_height/10))
+            ax.contour( img_IUV[:,:,1]/256., 10, linewidths = 1 )
+            ax.contour( img_IUV[:,:,2]/256., 10, linewidths = 1 )
+            ax.invert_yaxis()
+            fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
             plt.axis('off')
-            #plt.show()
-            out_full_file = os.path.join( args.results_dir, os.path.basename(os.path.join(args.in_image_dir, img_name)).split("_IUV.")[0] + "_IUV_contour.png" )
-            plt.savefig( out_full_file, dpi = 100, bbox_inches = 'tight' )
+            
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png')
+            enc = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+            img_IUV_contour = cv2.imdecode(enc, 1)
+            img_IUV_contour = img_IUV_contour[:,:,::-1]
+            img_IUV_contour = cv2.resize(img_IUV_contour, dsize=(args.image_width, args.image_height), interpolation=cv2.INTER_LANCZOS4)
+            plt.clf()
+
+            out_full_file = os.path.join( args.results_dir, os.path.basename(os.path.join(args.in_image_dir, img_name)).split("_IUV.")[0] + "_IUV.png" )
+            #plt.savefig( out_full_file, dpi = 100, bbox_inches = 'tight' )
+            cv2.imwrite(out_full_file, img_IUV_contour)
 
         elif( args.format == "segument" ):
             img_IUV_parse = img_IUV[:,:,0]
-            out_full_file = os.path.join( args.results_dir, os.path.basename(os.path.join(args.in_image_dir, img_name)).split("_IUV.")[0] + "_IUV_segument.png" )
+            out_full_file = os.path.join( args.results_dir, os.path.basename(os.path.join(args.in_image_dir, img_name)).split("_IUV.")[0] + "_IUV.png" )
             cv2.imwrite(out_full_file, img_IUV_parse)

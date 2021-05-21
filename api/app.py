@@ -7,6 +7,7 @@ from PIL import Image
 import cv2
 import numpy as np
 import itertools
+#import matplotlib.pyplot as plt
 
 # flask
 import flask
@@ -73,10 +74,42 @@ def responce():
     iuv_pillow, inds_pillow = inference( cfg_path = args.cfg, weights = args.weights, img_pillow = pose_img_pillow, output_dir = "tmp" )
 
     #------------------------------------------
+    # パース画像の抽出
+    #------------------------------------------
+    """
+    iuv_np = cv2.cvtColor(np.asarray(iuv_pillow), cv2.COLOR_RGB2BGR)
+    parse_np = iuv_np[:,:,0]
+    parse_pillow = Image.fromarray(parse_np)
+    """
+
+    #------------------------------------------
+    # 等高線画像の抽出
+    #------------------------------------------
+    """
+    fig, ax = plt.subplots(figsize=(iuv_np.shape[0]/10, iuv_np.shape[1]/10))
+    ax.contour( iuv_np[:,:,1]/256., 10, linewidths = 1 )
+    ax.contour( iuv_np[:,:,2]/256., 10, linewidths = 1 )
+    ax.invert_yaxis()
+    fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
+    plt.axis('off')
+    
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    enc = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+    contour_np = cv2.imdecode(enc, 1)
+    contour_np = contour_np[:,:,::-1]
+    contour_np = cv2.resize(contour_np, dsize=(iuv_np.shape[0], iuv_np.shape[1]), interpolation=cv2.INTER_LANCZOS4)
+    plt.clf()
+    contour_pillow = Image.fromarray(contour_np)
+    """
+
+    #------------------------------------------
     # 送信する画像データの変換
     #------------------------------------------
     iuv_img_base64 = conv_pillow_to_base64( iuv_pillow )
     inds_img_base64 = conv_pillow_to_base64( inds_pillow )
+    #parse_img_base64 = conv_pillow_to_base64( parse_pillow )
+    #contour_img_base64 = conv_pillow_to_base64( contour_pillow )
 
     #------------------------------------------
     # レスポンスメッセージの設定
@@ -87,6 +120,8 @@ def responce():
             'status':'OK',
             'iuv_img_base64': iuv_img_base64,
             'inds_img_base64': inds_img_base64,
+#            'parse_img_base64': parse_img_base64,
+#            'contour_img_base64': contour_img_base64,
         }
     )
 
